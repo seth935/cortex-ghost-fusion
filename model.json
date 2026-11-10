@@ -1,0 +1,63 @@
+{
+  "$schema": "https://weightsofgiants.com/schema/model-v1.json",
+  "schema_version": "1.0",
+  "name": "Cortex-Ghost-Fusion",
+  "version": "1.0.0",
+  "source_type": "registry_fork",
+  "parent_lineage": [
+    "registry_fork",
+    "sub03cortexnetp2rural00000000003",
+    "sub01picodetghostv20000000000001",
+    "base04nanodetplusm00000000000004"
+  ],
+  "upstream_repo": "https://github.com/seth935/cortexnet-p2-rural",
+  "license": "AGPL-3.0",
+  "target_hardware": "la-frite-1gb",
+  "runtime": "onnxruntime",
+  "threads": 2,
+  "runtime_config": {
+    "engine": "onnxruntime",
+    "threads": 2,
+    "execution_mode": "sequential"
+  },
+  "domains": ["indoor", "urban", "rural"],
+  "frame_policy": {
+    "input_size": [320, 320],
+    "resize": "letterbox",
+    "skip": 0
+  },
+  "detector": {
+    "model_path": "models/detector_int8.onnx",
+    "input_size": [320, 320],
+    "conf_threshold": 0.30,
+    "iou_threshold": 0.60,
+    "max_detections": 64
+  },
+  "tracker": {
+    "algo": "bytetrack-lite",
+    "track_thresh": 0.32,
+    "track_buffer": 30,
+    "match_thresh": 0.84,
+    "temporal_ema_alpha": 0.72
+  },
+  "stages": [
+    {
+      "type": "detector",
+      "model": "models/detector_int8.onnx",
+      "input_size": [320, 320],
+      "conf_threshold": 0.30,
+      "iou_threshold": 0.60,
+      "max_detections": 64
+    },
+    {
+      "type": "tracker",
+      "algo": "bytetrack-lite",
+      "params": {
+        "track_thresh": 0.32,
+        "track_buffer": 30,
+        "match_thresh": 0.84,
+        "temporal_ema_alpha": 0.72
+      }
+    }
+  ]
+}
